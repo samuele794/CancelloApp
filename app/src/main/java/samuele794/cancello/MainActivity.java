@@ -39,13 +39,13 @@ import javax.net.ssl.HttpsURLConnection;
 
 import static android.net.wifi.WifiManager.WIFI_STATE_ENABLED;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private URL paginaURL;
     private InputStream risposta;
     private TextView textView;
     private String text;
-    private static final int MY_PERMISSION_DATE = 0 ;
+    private static final int MY_PERMISSION_DATE = 0;
     private WifiManager wifiMan;
 
 
@@ -54,13 +54,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
         Button bottone = (Button) findViewById(R.id.bottoneCancello);
         bottone.setOnClickListener(this);
         textView = (TextView) findViewById(R.id.DebugText);
-        if( savedInstanceState != null){
+        if (savedInstanceState != null) {
             textView.setText(savedInstanceState.getString("textView"));
         }
 
@@ -69,20 +66,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
 
-    public void onClick(View v){
+    public void onClick(View v) {
         wifiMan = (WifiManager) getApplicationContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if(wifiMan.isWifiEnabled() == false) {
+        if (wifiMan.isWifiEnabled() == false) {
             //Toast.makeText(getApplicationContext(), "wifi no good", Toast.LENGTH_SHORT).show();
             System.out.print(wifiMan.getWifiState());
 
-                //wifiMan.setWifiEnabled(true);
+            //wifiMan.setWifiEnabled(true);
         }
         new Gt().execute();
     }
 
 
-
-    public class Gt extends AsyncTask<Void, Void, Void>{
+    public class Gt extends AsyncTask<Void, Void, Void> {
 
 
         @Override
@@ -91,71 +87,69 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             DataOutputStream stream = null;
             HttpURLConnection connection = null;
             String urlparam = "";
-            boolean a = true;
-            do{     try{
-                paginaURL = new URL("http://www.gate794.heliohost.org/access.php"); //URL
 
-                connection = (HttpURLConnection)paginaURL.openConnection(); //ISTAURAZIONE CONNESSIONE
-                urlparam= "a=25"; //DATI PER POST
-                //CONFIGURAZIONE STREAM POST
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("USER-AGENT", "Mozilla/5.0");
-                connection.setRequestProperty("ACCEPT-LANUGAGE", "en-US,en;0.5");
-                connection.setDoOutput(true);
-                stream = new DataOutputStream(connection.getOutputStream()); //CREAZIONE STREAM
-                a = false;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
+            /**
+             * DA AGGIUNGERE QUESTA FUNZIONALITÀ:
+             *
+             * Controllare se la connessione a internet è presente,
+             * se non presente lascia un Toast ed esce altrimenti va avanti
+             *
+             *
+             */
+
+
+            boolean a = true;
+            do {
+                try {
+                    paginaURL = new URL("http://www.gate794.heliohost.org/access.php"); //URL
+
+                    connection = (HttpURLConnection) paginaURL.openConnection(); //ISTAURAZIONE CONNESSIONE
+                    urlparam = "a=25"; //DATI PER POST
+                    //CONFIGURAZIONE STREAM POST
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("USER-AGENT", "Mozilla/5.0");
+                    connection.setRequestProperty("ACCEPT-LANUGAGE", "en-US,en;0.5");
+                    connection.setDoOutput(true);
+                    stream = new DataOutputStream(connection.getOutputStream()); //CREAZIONE STREAM
+                    a = false;
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    a = true;
+                    e.printStackTrace();
+                }
+            } while (a);
+
+            try {
+                stream.writeBytes(urlparam); //INVIO DATI IN POST
+                stream.flush();
+                stream.close(); //CHIUSURA STREAM
+
+                //int response = connection.getResponseCode();
+                final StringBuilder out = new StringBuilder(); //"Request URL" + paginaURL
+                //out.append(System.getProperty("line.separator")+ "Request Paramenters " + urlparam);
+                //out.append(System.getProperty("line.separator")  + "Response Code " + response);
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line = "";
+                StringBuilder responeout = new StringBuilder();
+
+                while ((line = br.readLine()) != null) {
+                    responeout.append(line);
+                }
+                br.close();
+                //System.getProperty("line.separator") + "Response " + System.getProperty("line.separator") + System.getProperty("line.separator") +
+                out.append(responeout.toString());
+
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setText(out);
+                    }
+                });
             } catch (IOException e) {
-                a = true;
                 e.printStackTrace();
             }
-            }while (a);
-            /*
-                try{
-
-                }catch (IOException e){
-
-                }*/
-
-
-
-             try {
-                 stream.writeBytes(urlparam); //INVIO DATI IN POST
-                 stream.flush();
-                 stream.close(); //CHIUSURA STREAM
-
-                 //int response = connection.getResponseCode();
-                 final StringBuilder out = new StringBuilder(); //"Request URL" + paginaURL
-                 //out.append(System.getProperty("line.separator")+ "Request Paramenters " + urlparam);
-                 //out.append(System.getProperty("line.separator")  + "Response Code " + response);
-
-                 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                 String line = "";
-                 StringBuilder responeout = new StringBuilder();
-
-                 while((line = br.readLine())!= null ){
-                     responeout.append(line);
-                 }
-                 br.close();
-                 //System.getProperty("line.separator") + "Response " + System.getProperty("line.separator") + System.getProperty("line.separator") +
-                 out.append(responeout.toString());
-
-                 MainActivity.this.runOnUiThread(new Runnable() {
-
-                     @Override
-                     public void run() {
-                         textView.setText(out);
-
-                     }
-                 });
-             }catch (IOException e) {
-
-                 e.printStackTrace();
-             }
-
-
-
 
             return null;
         }
@@ -163,13 +157,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(Void aVoid) {
 
-            //textView.setText(text);
             super.onPostExecute(aVoid);
         }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState ) {
+    public void onSaveInstanceState(Bundle outState) {
 
         outState.putString("textView", textView.getText().toString());
 
