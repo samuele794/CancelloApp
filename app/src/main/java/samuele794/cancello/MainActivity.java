@@ -67,13 +67,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
 
     public void onClick(View v) {
-        wifiMan = (WifiManager) getApplicationContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        /**
+         * GESTISCE ACCENSIONE WIFI IN CODICE
+         */
+
+        /*wifiMan = (WifiManager) getApplicationContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (wifiMan.isWifiEnabled() == false) {
             //Toast.makeText(getApplicationContext(), "wifi no good", Toast.LENGTH_SHORT).show();
             System.out.print(wifiMan.getWifiState());
 
             //wifiMan.setWifiEnabled(true);
-        }
+        }*/
+
+
         new Gt().execute();
     }
 
@@ -93,12 +100,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
              *
              * Controllare se la connessione a internet è presente,
              * se non presente lascia un Toast ed esce altrimenti va avanti
+             * http://stackoverflow.com/questions/13523396/enable-disable-mobile-data-gprs-using-code?answertab=votes#tab-top
              *
+             * _recupero codice imei
+             * http://stackoverflow.com/questions/1972381/how-to-get-the-devices-imei-esn-programmatically-in-android
+             *
+             * _registrazione cancello tramite app.
+             *  usare shared preference per limitare la registrazione a solo una volta tramite db
              *
              */
 
 
             boolean a = true;
+
             do {
                 try {
                     paginaURL = new URL("http://www.gate794.heliohost.org/access.php"); //URL
