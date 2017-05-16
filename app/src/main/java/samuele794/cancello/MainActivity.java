@@ -6,12 +6,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -29,6 +31,9 @@ import java.io.UnsupportedEncodingException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int MY_PERMISSION_DATE = 0;
     private WifiManager wifiMan;
 
+    private static final String DEBUG_TAG = "NetworkStatusExample";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +87,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }*/
 
 
-        new Gt().execute();
+        isOnline();
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        boolean isWifiConn = networkInfo.isConnected();
+        networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        boolean isMobileConn = networkInfo.isConnected();
+
+        if(isWifiConn ==true || isMobileConn == true){
+            if(isOnline()){
+                new Gt().execute();
+            }
+        }else{
+            Toast.makeText(getApplicationContext(), "Aio ci sono problemi di rete", Toast.LENGTH_SHORT).show();
+        }
+
+
+
     }
 
 
@@ -113,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             boolean a = true;
 
-            do {
                 try {
                     paginaURL = new URL("http://www.gate794.heliohost.org/access.php"); //URL
 
@@ -132,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     a = true;
                     e.printStackTrace();
                 }
-            } while (a);
+
 
             try {
                 stream.writeBytes(urlparam); //INVIO DATI IN POST
@@ -182,4 +205,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onSaveInstanceState(outState);
     }
+
+    public boolean isOnline() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
+
+
+
+
+
+
 }
+
+
+
+
