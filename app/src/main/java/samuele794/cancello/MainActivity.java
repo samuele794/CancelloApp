@@ -48,12 +48,13 @@ import static android.net.wifi.WifiManager.WIFI_STATE_ENABLED;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final int REQUEST_READ_PHONE_STATE = 0;
     private URL paginaURL;
     private InputStream risposta;
     private TextView textView;
     private String text;
-    private static final int MY_PERMISSION_DATE = 0;
     private WifiManager wifiMan;
+    //private static String a =android.telephony.TelephonyManager.getDeviceId();
 
     private static final String DEBUG_TAG = "NetworkStatusExample";
 
@@ -68,6 +69,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (savedInstanceState != null) {
             textView.setText(savedInstanceState.getString("textView"));
         }
+
+        int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
+        } else {
+            //TODO
+        }
+
+
 
 
     }
@@ -97,12 +108,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         boolean isMobileConn = networkInfo.isConnected();
 
+
+
+
         if(isWifiConn ==true || isMobileConn == true){
             if(isOnline()){
                 new Gt().execute();
+            }else{
+                Toast.makeText(getApplicationContext(), "Eja ci sono problemi di rete", Toast.LENGTH_SHORT).show();
             }
         }else{
-            Toast.makeText(getApplicationContext(), "Aio ci sono problemi di rete", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Eja ci sono problemi di rete", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -118,17 +134,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             DataOutputStream stream = null;
             HttpURLConnection connection = null;
-            String urlparam = "";
-
+            StringBuilder urlparam = new StringBuilder();
+            String imei = new String();
             /**
              * DA AGGIUNGERE QUESTA FUNZIONALITÀ:
-             *
-             * Controllare se la connessione a internet è presente,
-             * se non presente lascia un Toast ed esce altrimenti va avanti
-             * http://stackoverflow.com/questions/13523396/enable-disable-mobile-data-gprs-using-code?answertab=votes#tab-top
-             *
-             * _recupero codice imei
-             * http://stackoverflow.com/questions/1972381/how-to-get-the-devices-imei-esn-programmatically-in-android
              *
              * _registrazione cancello tramite app.
              *  usare shared preference per limitare la registrazione a solo una volta tramite db
@@ -136,30 +145,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
              */
 
 
-            boolean a = true;
-
                 try {
                     paginaURL = new URL("http://www.gate794.heliohost.org/access.php"); //URL
 
                     connection = (HttpURLConnection) paginaURL.openConnection(); //ISTAURAZIONE CONNESSIONE
-                    urlparam = "a=25"; //DATI PER POST
+                    urlparam.append("stato=1&IMEI="); //DATI PER POST
+
+                    TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+                    String imei_start =telephonyManager.getDeviceId();
+                    if(imei_start.length() == 15){
+                        imei = "0" + imei_start;
+                    }else{
+                        imei = imei_start;
+                    }
+                    urlparam.append(imei);
                     //CONFIGURAZIONE STREAM POST
                     connection.setRequestMethod("POST");
                     connection.setRequestProperty("USER-AGENT", "Mozilla/5.0");
                     connection.setRequestProperty("ACCEPT-LANUGAGE", "en-US,en;0.5");
                     connection.setDoOutput(true);
                     stream = new DataOutputStream(connection.getOutputStream()); //CREAZIONE STREAM
-                    a = false;
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
-                    a = true;
+
                     e.printStackTrace();
                 }
 
 
             try {
-                stream.writeBytes(urlparam); //INVIO DATI IN POST
+                stream.writeBytes(String.valueOf(urlparam)); //INVIO DATI IN POST
                 stream.flush();
                 stream.close(); //CHIUSURA STREAM
 
@@ -229,6 +244,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_READ_PHONE_STATE:
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    //TODO
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
 
 
 
