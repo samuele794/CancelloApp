@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="imageStart" type="id"></item>
-    <item name="bottoneCancello" type="id"></item>
-    <item name="menu_config" type="id"></item>
+    <item name="imageStart" type="id"/>
+    <item name="bottoneCancelloApertura" type="id"/>
+    <item name="menu_config" type="id"/>
+    <item name="bottoneCancelloChiusura" type="id"/>
+
 
 </resources>

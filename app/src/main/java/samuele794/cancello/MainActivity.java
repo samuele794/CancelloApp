@@ -87,8 +87,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boolean isMobileConn = networkInfo.isConnected();
 
 
-
-
         if(isWifiConn || isMobileConn){
             if(isOnline()){
                 new Gt().execute();
@@ -102,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
-
 
     private class Gt extends AsyncTask<Void, Void, Void> {
 
@@ -119,6 +116,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
              *
              * _registrazione cancello tramite app.
              *  usare shared preference per limitare la registrazione a solo una volta tramite db
+             *
+             *  ottimizzazione dei click listener e delle classi
+             *  https://www.mrwebmaster.it/android/listener-ottimizzato-gestire-click-sui-nostri-bottoni_10645.html
+             *
+             *  trasferire Gt su un file separato
              *
              */
 

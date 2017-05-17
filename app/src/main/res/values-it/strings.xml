@@ -3,5 +3,6 @@
     <string name="app_name">Cancello</string>
     <string name="open_button">Apri</string>
     <string name="menu_config">Configurazione</string>
+    <string name="close_button">Chiudi</string>
 
 </resources>
