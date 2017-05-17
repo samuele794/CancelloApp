@@ -2,5 +2,6 @@
 <resources>
     <item name="imageStart" type="id"></item>
     <item name="bottoneCancello" type="id"></item>
+    <item name="menu_config" type="id"></item>
 
 </resources>

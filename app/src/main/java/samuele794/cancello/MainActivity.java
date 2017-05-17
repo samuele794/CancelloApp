@@ -6,9 +6,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.PersistableBundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -21,28 +18,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.jar.Manifest;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import static android.net.wifi.WifiManager.WIFI_STATE_ENABLED;
 
@@ -50,13 +34,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int REQUEST_READ_PHONE_STATE = 0;
     private URL paginaURL;
-    private InputStream risposta;
     private TextView textView;
-    private String text;
     private WifiManager wifiMan;
     //private static String a =android.telephony.TelephonyManager.getDeviceId();
-
-    private static final String DEBUG_TAG = "NetworkStatusExample";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +54,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
-        } else {
-            //TODO
         }
 
 
@@ -87,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View v) {
 
-        /**
+        /*
          * GESTISCE ACCENSIONE WIFI IN CODICE
          */
 
@@ -111,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-        if(isWifiConn ==true || isMobileConn == true){
+        if(isWifiConn || isMobileConn){
             if(isOnline()){
                 new Gt().execute();
             }else{
@@ -126,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public class Gt extends AsyncTask<Void, Void, Void> {
+    private class Gt extends AsyncTask<Void, Void, Void> {
 
 
         @Override
@@ -135,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             DataOutputStream stream = null;
             HttpURLConnection connection = null;
             StringBuilder urlparam = new StringBuilder();
-            String imei = new String();
-            /**
+            String imei;
+            /*
              * DA AGGIUNGERE QUESTA FUNZIONALITÀ:
              *
              * _registrazione cancello tramite app.
@@ -184,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //out.append(System.getProperty("line.separator")  + "Response Code " + response);
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line = "";
+                String line;
                 StringBuilder responeout = new StringBuilder();
 
                 while ((line = br.readLine()) != null) {
@@ -209,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected void onPostExecute(Void aVoid) {
-
             super.onPostExecute(aVoid);
         }
     }
@@ -222,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onSaveInstanceState(outState);
     }
 
-    public boolean isOnline() {
+    private boolean isOnline() {
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -237,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         int id=item.getItemId();
         switch(id) {
-            case R.id.Config: {
+            case R.id.menu_config: {
                 Toast.makeText(getApplicationContext(), "funge", Toast.LENGTH_SHORT).show();
             }
         }
@@ -248,9 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_READ_PHONE_STATE:
-                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    //TODO
-                }
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)){}
                 break;
 
             default:

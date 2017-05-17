@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cancello</string>
+    <string name="open_button">Apri</string>
+    <string name="menu_config">Configurazione</string>
+
+</resources>

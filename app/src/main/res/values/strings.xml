@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">Cancello</string>
-
+    <string name="app_name">Gate</string>
+    <string name="open_button">Open</string>
+    <string name="menu_config">Configuration</string>
 </resources>
