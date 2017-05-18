@@ -6,6 +6,8 @@
     tools:context="samuele794.cancello.MainActivity"
     android:orientation="vertical">
 
+
+
     <TextView
         android:id="@+id/DebugText"
         android:layout_width="match_parent"
@@ -19,12 +21,11 @@
         >
 
         <Button
+            android:id="@id/bottoneCancelloApertura"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@id/bottoneCancelloApertura"
-            android:text="@string/open_button"
             android:layout_marginBottom="10dp"
-            />
+            android:text="@string/open_button" />
 
 
 

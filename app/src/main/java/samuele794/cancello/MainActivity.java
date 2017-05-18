@@ -43,8 +43,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button bottone = (Button) findViewById(R.id.bottoneCancello);
-        bottone.setOnClickListener(this);
+        Button bottoneApertura = (Button) findViewById(R.id.bottoneCancelloApertura);
+        Button bottoneChiusura = (Button) findViewById(R.id.bottoneCancelloChiusura);
+        bottoneApertura.setOnClickListener(this);
+        bottoneChiusura.setOnClickListener(this);
         textView = (TextView) findViewById(R.id.DebugText);
         if (savedInstanceState != null) {
             textView.setText(savedInstanceState.getString("textView"));
@@ -59,11 +61,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
+
     }
 
     @Override
 
     public void onClick(View v) {
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        boolean isWifiConn = networkInfo.isConnected();
+        networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        boolean isMobileConn = networkInfo.isConnected();
+
+        if(isWifiConn || isMobileConn){
+            if(isOnline()){
+                switch(v.getId()){
+                    case R.id.bottoneCancelloApertura:{
+                        Toast.makeText(getApplicationContext(), "Bottone Apertura", Toast.LENGTH_SHORT).show();
+                        new openGate();
+                    }
+                    break;
+                    case R.id.bottoneCancelloChiusura:{
+                        Toast.makeText(getApplicationContext(), "Bottone Chiusura", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+            }else{
+                Toast.makeText(getApplicationContext(), "Eja ci sono problemi di rete", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            Toast.makeText(getApplicationContext(), "Eja ci sono problemi di rete", Toast.LENGTH_SHORT).show();
+        }
+
+
+
 
         /*
          * GESTISCE ACCENSIONE WIFI IN CODICE
@@ -77,31 +111,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //wifiMan.setWifiEnabled(true);
         }*/
 
-
-
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        boolean isWifiConn = networkInfo.isConnected();
-        networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        boolean isMobileConn = networkInfo.isConnected();
-
-
-        if(isWifiConn || isMobileConn){
-            if(isOnline()){
-                new Gt().execute();
-            }else{
-                Toast.makeText(getApplicationContext(), "Eja ci sono problemi di rete", Toast.LENGTH_SHORT).show();
-            }
-        }else{
-            Toast.makeText(getApplicationContext(), "Eja ci sono problemi di rete", Toast.LENGTH_SHORT).show();
-        }
-
-
-
     }
 
-    private class Gt extends AsyncTask<Void, Void, Void> {
+    private class openGate extends AsyncTask<Void, Void, Void> {
 
 
         @Override
@@ -120,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
              *  ottimizzazione dei click listener e delle classi
              *  https://www.mrwebmaster.it/android/listener-ottimizzato-gestire-click-sui-nostri-bottoni_10645.html
              *
-             *  trasferire Gt su un file separato
+             *
              *
              */
 
@@ -192,6 +204,81 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(aVoid);
         }
     }
+
+    private class closeGate extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            DataOutputStream stream = null;
+            HttpURLConnection connection = null;
+            StringBuilder urlparam = new StringBuilder();
+            String imei;
+
+
+            try {
+                paginaURL = new URL("http://www.gate794.heliohost.org/access.php"); //URL
+
+                connection = (HttpURLConnection) paginaURL.openConnection(); //ISTAURAZIONE CONNESSIONE
+                urlparam.append("stato=1&IMEI="); //DATI PER POST
+
+                TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+                String imei_start =telephonyManager.getDeviceId();
+                if(imei_start.length() == 15){
+                    imei = "0" + imei_start;
+                }else{
+                    imei = imei_start;
+                }
+                urlparam.append(imei);
+                //CONFIGURAZIONE STREAM POST
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("USER-AGENT", "Mozilla/5.0");
+                connection.setRequestProperty("ACCEPT-LANUGAGE", "en-US,en;0.5");
+                connection.setDoOutput(true);
+                stream = new DataOutputStream(connection.getOutputStream()); //CREAZIONE STREAM
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+
+
+            try {
+                stream.writeBytes(String.valueOf(urlparam)); //INVIO DATI IN POST
+                stream.flush();
+                stream.close(); //CHIUSURA STREAM
+
+                //int response = connection.getResponseCode();
+                final StringBuilder out = new StringBuilder(); //"Request URL" + paginaURL
+                //out.append(System.getProperty("line.separator")+ "Request Paramenters " + urlparam);
+                //out.append(System.getProperty("line.separator")  + "Response Code " + response);
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line;
+                StringBuilder responeout = new StringBuilder();
+
+                while ((line = br.readLine()) != null) {
+                    responeout.append(line);
+                }
+                br.close();
+                //System.getProperty("line.separator") + "Response " + System.getProperty("line.separator") + System.getProperty("line.separator") +
+                out.append(responeout.toString());
+
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setText(out);
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+
+        }
+    }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
