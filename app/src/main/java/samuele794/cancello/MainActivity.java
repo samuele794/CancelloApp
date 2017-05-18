@@ -1,11 +1,13 @@
 package samuele794.cancello;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -43,19 +45,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //ACQISIZIONE DATI VIEW
         Button bottoneApertura = (Button) findViewById(R.id.bottoneCancelloApertura);
         Button bottoneChiusura = (Button) findViewById(R.id.bottoneCancelloChiusura);
+        textView = (TextView) findViewById(R.id.DebugText);
+
+        //IMPOSTAZIONE CLICK LISTENER
         bottoneApertura.setOnClickListener(this);
         bottoneChiusura.setOnClickListener(this);
-        textView = (TextView) findViewById(R.id.DebugText);
+
+        //SALVATAGGIO ISTANZA PER ROTAZIONE SCHERMO
         if (savedInstanceState != null) {
             textView.setText(savedInstanceState.getString("textView"));
         }
 
-        int permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
-
+        //RICHIESTA PERMESSO LETTURA IMEI
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
         }
 
 
@@ -64,8 +71,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /**
+     * 
+     * @param v
+     */
     @Override
-
     public void onClick(View v) {
 
         ConnectivityManager connMgr = (ConnectivityManager)
@@ -79,13 +89,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(isOnline()){
                 switch(v.getId()){
                     case R.id.bottoneCancelloApertura:{
-                        Toast.makeText(getApplicationContext(), "Bottone Apertura", Toast.LENGTH_SHORT).show();
-                        new openGate();
+                        //Toast.makeText(getApplicationContext(), "Bottone Apertura", Toast.LENGTH_SHORT).show();
+                        new openGate().execute();
                     }
                     break;
                     case R.id.bottoneCancelloChiusura:{
                         Toast.makeText(getApplicationContext(), "Bottone Chiusura", Toast.LENGTH_SHORT).show();
-
+                        new closeGate().execute();
                     }
 
                 }
@@ -219,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 paginaURL = new URL("http://www.gate794.heliohost.org/access.php"); //URL
 
                 connection = (HttpURLConnection) paginaURL.openConnection(); //ISTAURAZIONE CONNESSIONE
-                urlparam.append("stato=1&IMEI="); //DATI PER POST
+                urlparam.append("stato=2&IMEI="); //DATI PER POST
 
                 TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
                 String imei_start =telephonyManager.getDeviceId();
