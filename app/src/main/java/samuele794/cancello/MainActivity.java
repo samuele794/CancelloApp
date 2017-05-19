@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //ACQISIZIONE DATI VIEW
         Button bottoneApertura = (Button) findViewById(R.id.bottoneCancelloApertura);
         Button bottoneChiusura = (Button) findViewById(R.id.bottoneCancelloChiusura);
-        textView = (TextView) findViewById(R.id.DebugText);
+        //textView = (TextView) findViewById(R.id.DebugText);
 
         //IMPOSTAZIONE CLICK LISTENER
         bottoneApertura.setOnClickListener(this);
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 
+     *
      * @param v
      */
     @Override
@@ -90,11 +90,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch(v.getId()){
                     case R.id.bottoneCancelloApertura:{
                         //Toast.makeText(getApplicationContext(), "Bottone Apertura", Toast.LENGTH_SHORT).show();
-                        new openGate().execute();
+                       new openGate().execute();
                     }
                     break;
                     case R.id.bottoneCancelloChiusura:{
-                        Toast.makeText(getApplicationContext(), "Bottone Chiusura", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getApplicationContext(), "Bottone Chiusura", Toast.LENGTH_SHORT).show();
                         new closeGate().execute();
                     }
 
@@ -141,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
              *
              *  ottimizzazione dei click listener e delle classi
              *  https://www.mrwebmaster.it/android/listener-ottimizzato-gestire-click-sui-nostri-bottoni_10645.html
-             *
              *
              *
              */

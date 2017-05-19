@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,36 +9,53 @@
 
 
 
-    <TextView
+    <!---  <TextView
         android:id="@+id/DebugText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center"
         >
 
-        <Button
-            android:id="@id/bottoneCancelloApertura"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/open_button" />
-
-
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@id/bottoneCancelloChiusura"
-            android:text="@string/close_button"
-            />
 
 
     </LinearLayout>
 
 
-</RelativeLayout>
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        >
+
+
+
+    </LinearLayout>-->
+
+    <Button
+        android:id="@id/bottoneCancelloApertura"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:text="@string/open_button"
+        android:background="@drawable/round_button"
+        android:layout_marginTop="75dp"
+        android:layout_gravity="top|center"
+        android:backgroundTint="@color/colorGreen"
+        />
+
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:id="@id/bottoneCancelloChiusura"
+        android:text="@string/close_button"
+        android:layout_gravity="bottom|center"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/colorRed"
+        android:layout_marginBottom="75dp"
+        />
+</GridLayout>
