@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:id="@+id/DebugText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:forceHasOverlappingRendering="true"
+            />
+
+
+    </GridLayout>
+    <Button
+        android:id="@id/bottoneCancelloApertura"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/colorGreen"
+        android:layout_gravity="left|center"
+        android:layout_marginLeft="75dp"
+        android:text="@string/open_button" />
+
+
+    <Button
+        android:id="@id/bottoneCancelloChiusura"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/round_button"
+        android:layout_marginRight="75dp"
+        android:layout_gravity="right|center"
+        android:backgroundTint="@color/colorRed"
+        android:text="@string/close_button" />
+
+
+
+</GridLayout>

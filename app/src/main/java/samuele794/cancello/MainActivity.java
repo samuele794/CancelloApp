@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //ACQISIZIONE DATI VIEW
         Button bottoneApertura = (Button) findViewById(R.id.bottoneCancelloApertura);
         Button bottoneChiusura = (Button) findViewById(R.id.bottoneCancelloChiusura);
-        //textView = (TextView) findViewById(R.id.DebugText);
+        textView = (TextView) findViewById(R.id.DebugText);
 
         //IMPOSTAZIONE CLICK LISTENER
         bottoneApertura.setOnClickListener(this);
@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             try {
+
                 stream.writeBytes(String.valueOf(urlparam)); //INVIO DATI IN POST
                 stream.flush();
                 stream.close(); //CHIUSURA STREAM
