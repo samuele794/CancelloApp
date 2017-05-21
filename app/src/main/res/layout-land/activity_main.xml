@@ -18,26 +18,29 @@
 
 
     </GridLayout>
+
     <Button
         android:id="@id/bottoneCancelloApertura"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:background="@drawable/round_button"
-        android:backgroundTint="@color/colorGreen"
         android:layout_gravity="left|center"
         android:layout_marginLeft="75dp"
-        android:text="@string/open_button" />
+        android:background="@drawable/round_button"
+        android:backgroundTint="@color/colorGreen"
+        android:text="@string/open_button"
+        android:textSize="24sp" />
 
 
     <Button
         android:id="@id/bottoneCancelloChiusura"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:background="@drawable/round_button"
-        android:layout_marginRight="75dp"
         android:layout_gravity="right|center"
+        android:layout_marginRight="75dp"
+        android:background="@drawable/round_button"
         android:backgroundTint="@color/colorRed"
-        android:text="@string/close_button" />
+        android:text="@string/close_button"
+        android:textSize="24sp" />
 
 
 
