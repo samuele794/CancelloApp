@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private URL paginaURL;
     private TextView textView;
     private WifiManager wifiMan;
+    private Button bottoneApertura;
+    private Button bottoneChiusura;
+
     //private static String a =android.telephony.TelephonyManager.getDeviceId();
 
     @Override
@@ -46,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         //ACQISIZIONE DATI VIEW
-        Button bottoneApertura = (Button) findViewById(R.id.bottoneCancelloApertura);
-        Button bottoneChiusura = (Button) findViewById(R.id.bottoneCancelloChiusura);
+        bottoneApertura = (Button) findViewById(R.id.bottoneCancelloApertura);
+        bottoneChiusura = (Button) findViewById(R.id.bottoneCancelloChiusura);
         textView = (TextView) findViewById(R.id.DebugText);
 
         //IMPOSTAZIONE CLICK LISTENER
@@ -72,12 +75,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     *
+     * Metodo chiamato dal clickListener, gestisce la disattivazione dei bottoni, controllo di connessione
+     * e i metodi per apertura e chiusura del cancello
      * @param v
      */
     @Override
     public void onClick(View v) {
 
+        //DISATTIVAZIONE BOTTONI
+        bottoneApertura.setActivated(false);
+        bottoneChiusura.setActivated(false);
+
+
+        //CONTROLLO CHE LA CONNESSIONE SIA ATTIVA E ONLINE
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -90,12 +100,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch(v.getId()){
                     case R.id.bottoneCancelloApertura:{
                         //Toast.makeText(getApplicationContext(), "Bottone Apertura", Toast.LENGTH_SHORT).show();
-                       new openGate().execute();
+                       new openGate().execute();    //APERTURA
                     }
                     break;
                     case R.id.bottoneCancelloChiusura:{
                        // Toast.makeText(getApplicationContext(), "Bottone Chiusura", Toast.LENGTH_SHORT).show();
-                        new closeGate().execute();
+                        new closeGate().execute();  //CHIUSURA
                     }
 
                 }
@@ -123,9 +133,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /**
+     *  Questa Classe crea una task per eseguire le funzioni di apertura del cancello,
+     *
+     */
     private class openGate extends AsyncTask<Void, Void, Void> {
 
 
+        /**
+         * Metodo eseguito in background si occupa di creare la connessine, passare i dati in post per l' apertura
+         * e scaricare la pagina generata dal codice php
+         *
+         * @param params
+         * @return
+         */
         @Override
         protected Void doInBackground(Void... params) {
 
@@ -133,18 +154,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             HttpURLConnection connection = null;
             StringBuilder urlparam = new StringBuilder();
             String imei;
-            /*
-             * DA AGGIUNGERE QUESTA FUNZIONALITÀ:
-             *
-             * _registrazione cancello tramite app.
-             *  usare shared preference per limitare la registrazione a solo una volta tramite db
-             *
-             *  ottimizzazione dei click listener e delle classi
-             *  https://www.mrwebmaster.it/android/listener-ottimizzato-gestire-click-sui-nostri-bottoni_10645.html
-             *
-             *
-             */
-
 
                 try {
                     paginaURL = new URL("http://www.gate794.heliohost.org/access.php"); //URL
@@ -189,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String line;
                 StringBuilder responeout = new StringBuilder();
 
+                //DOWNLOAD PAGINA
+
                 while ((line = br.readLine()) != null) {
                     responeout.append(line);
                 }
@@ -196,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //System.getProperty("line.separator") + "Response " + System.getProperty("line.separator") + System.getProperty("line.separator") +
                 out.append(responeout.toString());
 
+                //TREAD PER LA MODIFICA DELL'INTERFACCIA
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -209,14 +221,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return null;
         }
 
+        /**
+         * Metodo eseguito in automatico dopo la la fine del doInBackaground, per
+         * riabilitare i bottoni
+         * @param aVoid
+         */
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            bottoneApertura.setActivated(true);
+            bottoneChiusura.setActivated(true);
+
         }
     }
 
+    /**
+     * Questa classe crea una task che serve a chiudere il cancello
+     */
     private class closeGate extends AsyncTask<Void, Void, Void>{
 
+        /**
+         * Metodo eseguito in background si occupa di creare la connessine, passare i dati in post per l' apertura
+         * e scaricare la pagina generata dal codice php
+         * @param params
+         * @return
+         */
         @Override
         protected Void doInBackground(Void... params) {
             DataOutputStream stream = null;
@@ -290,6 +319,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    /**
+     * Questo metodo salva l'istanza attiva sull'app per non perdere dati durante la rotazione dell schermo
+     * 
+     * @param outState
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
 
