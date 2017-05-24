@@ -45,7 +45,7 @@
         android:layout_marginTop="75dp"
         android:layout_gravity="top|center"
         android:backgroundTint="@color/colorGreen"
-        android:textSize="24dp"
+        android:textSize="24sp"
         />
 
 
@@ -58,6 +58,6 @@
         android:background="@drawable/round_button"
         android:backgroundTint="@color/colorRed"
         android:layout_marginBottom="75dp"
-        android:textSize="24dp"
+        android:textSize="24sp"
         />
 </GridLayout>

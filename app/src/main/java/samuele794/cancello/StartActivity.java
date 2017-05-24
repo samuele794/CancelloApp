@@ -10,7 +10,7 @@ public class StartActivity extends AppCompatActivity {
 
     private Handler cha =null;
 
-    private Runnable myRunnable = new Runnable() {
+    private final Runnable myRunnable = new Runnable() {
         @Override
         public void run() {
             Intent intent= new Intent(StartActivity.this,MainActivity.class);

@@ -7,7 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +23,6 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.net.HttpURLConnection;
@@ -145,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          * e scaricare la pagina generata dal codice php
          *
          * @param params
-         * @return
+         * @return null
          */
         @Override
         protected Void doInBackground(Void... params) {
@@ -175,8 +174,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     connection.setRequestProperty("ACCEPT-LANUGAGE", "en-US,en;0.5");
                     connection.setDoOutput(true);
                     stream = new DataOutputStream(connection.getOutputStream()); //CREAZIONE STREAM
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
 
                     e.printStackTrace();
@@ -216,6 +213,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (NullPointerException e){
+                e.printStackTrace();
             }
 
             return null;
@@ -244,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          * Metodo eseguito in background si occupa di creare la connessine, passare i dati in post per l' apertura
          * e scaricare la pagina generata dal codice php
          * @param params
-         * @return
+         * @return null
          */
         @Override
         protected Void doInBackground(Void... params) {
@@ -274,8 +273,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 connection.setRequestProperty("ACCEPT-LANUGAGE", "en-US,en;0.5");
                 connection.setDoOutput(true);
                 stream = new DataOutputStream(connection.getOutputStream()); //CREAZIONE STREAM
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (IOException e) {
 
                 e.printStackTrace();
@@ -311,6 +308,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (NullPointerException e){
+                e.printStackTrace();
             }
 
             return null;
@@ -321,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Questo metodo salva l'istanza attiva sull'app per non perdere dati durante la rotazione dell schermo
-     * 
+     *
      * @param outState
      */
     @Override
@@ -355,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_READ_PHONE_STATE:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)){}
